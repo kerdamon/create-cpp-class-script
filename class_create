@@ -31,43 +31,55 @@ PRIVATE_VARIABLES=
 while [ "$1" != "" ]; do
 	case $1 in
 		-pf | --public-function )	#shift
-									while [[ $1 != "" && ${1:0:1} != "-" ]]; do
-										PUBLIC_FUNCTIONS+=$'\t'$1$'();\n'
+									while [[ $2 != "" && ${2:0:1} != "-" ]]; do
+                                        #echo "After while, PUBLIC_FUNCTIONS = $PUBLIC_FUNCTIONS"
+										PUBLIC_FUNCTIONS+=$'\t'$2$'();\n'
+										#echo "Before shift, PUBLIC_FUNCTIONS = $PUBLIC_FUNCTIONS"
 										shift
+										#echo "After shift, PUBLIC_FUNCTIONS = $PUBLIC_FUNCTIONS"
 									done
 									PUBLIC_FUNCTIONS+=$'\n'
-									echo "detected --public-function"
-									echo "$PUBLIC_FUNCTIONS"
+									#echo "detected --public-function"
+									#echo "$PUBLIC_FUNCTIONS"
 									;;
 
 		-f | --private-function )	#shift
-									while [[ $1 != "" && ${1:0:1} != "-" ]]; do
-										PRIVATE_FUNCTIONS+=$'\t'$1$'();\n'
+									while [[ $2 != "" && ${2:0:1} != "-" ]]; do
+                                        #echo "After while, PRIVATE_FUNCTIONS = $PRIVATE_FUNCTIONS"
+										PRIVATE_FUNCTIONS+=$'\t'$2$'();\n'
+										#echo "Before shift, PRIVATE_FUNCTIONS = $PRIVATE_FUNCTIONS"
 										shift
+										#echo "After shift, PRIVATE_FUNCTIONS = $PRIVATE_FUNCTIONS"
 									done
 									PRIVATE_FUNCTIONS+=$'\n'
-									echo "detected --private-function"
-									echo "$PRIVATE_FUNCTIONS"
+									#echo "detected --private-function"
+									#echo "$PRIVATE_FUNCTIONS"
 									;;
 
 		-pv | --public-variable )	#shift
-									while [[ $1 != "" && ${1:0:1} != "-" ]]; do
-										PUBLIC_VARIABLES+=$'\t'$1$';\n'
+									while [[ $2 != "" && ${2:0:1} != "-" ]]; do
+                                        #echo "After while, PUBLIC_VARIABLES = $PUBLIC_VARIABLES"
+										PUBLIC_VARIABLES+=$'\t'$2$';\n'
+										#echo "Before shift, PUBLIC_VARIABLES = $PUBLIC_VARIABLES"
 										shift
+										#echo "After shift, PUBLIC_VARIABLES = $PUBLIC_VARIABLES"
 									done
 									PUBLIC_VARIABLES+=$'\n'
-									echo "detected --public-variable"
-									echo "$PUBLIC_VARIABLES"
+									#echo "detected --public-variable"
+									#echo "$PUBLIC_VARIABLES"
 									;;
 
 		-v | --private-variable )	#shift
-									while [[ $1 != "" && ${1:0:1} != "-" ]]; do
-										PRIVATE_VARIABLES+=$'\t'$1$';\n'
+									while [[ $2 != "" && ${2:0:1} != "-" ]]; do
+                                        #echo "After while, PRIVATE_VARIABLES = $PRIVATE_VARIABLES"
+										PRIVATE_VARIABLES+=$'\t'$2$';\n'
+										#echo "Before shift, PRIVATE_VARIABLES = $PRIVATE_VARIABLES"
 										shift
+										#echo "After shift, PRIVATE_VARIABLES = $PRIVATE_VARIABLES"
 									done
 									PRIVATE_VARIABLES+=$'\n'
-									echo "detected --private-variable"
-									echo "$PRIVATE_VARIABLES"
+									#echo "detected --private-variable"
+									#echo "$PRIVATE_VARIABLES"
 									;;
 	esac
 	shift
