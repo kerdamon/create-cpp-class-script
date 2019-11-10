@@ -2,7 +2,15 @@
 
 CLASS_NAME=$1
 
-#create .cpp and .h files, if input arguments are correct
+#print help
+if [[ $1 == "-h" || $1 == "--help" ]]; then
+
+	echo $'Script written in bash for creating C++ class .h and .cpp files. \n\nOPTIONS:\n\t-pf | --public-function\n\t\tScript will create public functions in proper place. You do not need to write (); at the end, only name of a function. Example: -pf public_function1 public_function2\n\n\t-f | --private-function\n\t\tScript will create private functions in proper place. You do not need to write (); at the end, only name of a function. Example: -f private_function1 private_function2\n\n\t-pv | --public-variable\n\t\tScript will create public variables in proper place. You do not need to write ; at the end, only name of a variable. Example: -pv public_variable1 public_variable2\n\n\t-v | --private-variable\n\t\tScript will create private variables in proper place. You do not need to write ; at the end, only name of a variable. Example: -v private_variable1 private_variable2'
+	
+	exit
+fi
+
+#create .cpp and .h files, if name is specified
 if [[ $1 !=  "" && ${1:0:1} != "-" ]]; then
 
 	if [ ! -f $CLASS_NAME.cpp ]; then
@@ -18,9 +26,12 @@ if [[ $1 !=  "" && ${1:0:1} != "-" ]]; then
 		H_EXISTED="TRUE"
 	fi
 
+#elif [[ $1 == "-h" ]]; then
 else
-	echo "Name of class not specified"
-	exit
+
+		echo "Name of class not specified"
+		exit
+
 fi
 
 #set the variables containing names of functions and variables
@@ -30,62 +41,43 @@ PUBLIC_VARIABLES=
 PRIVATE_VARIABLES=
 while [ "$1" != "" ]; do
 	case $1 in
-		-pf | --public-function )	#shift
+		-pf | --public-function )
 									while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-                                        #echo "After while, PUBLIC_FUNCTIONS = $PUBLIC_FUNCTIONS"
 										PUBLIC_FUNCTIONS+=$'\t'$2$'();\n'
-										#echo "Before shift, PUBLIC_FUNCTIONS = $PUBLIC_FUNCTIONS"
 										shift
-										#echo "After shift, PUBLIC_FUNCTIONS = $PUBLIC_FUNCTIONS"
 									done
 									PUBLIC_FUNCTIONS+=$'\n'
-									#echo "detected --public-function"
-									#echo "$PUBLIC_FUNCTIONS"
 									;;
 
-		-f | --private-function )	#shift
+		-f | --private-function )
 									while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-                                        #echo "After while, PRIVATE_FUNCTIONS = $PRIVATE_FUNCTIONS"
 										PRIVATE_FUNCTIONS+=$'\t'$2$'();\n'
-										#echo "Before shift, PRIVATE_FUNCTIONS = $PRIVATE_FUNCTIONS"
 										shift
-										#echo "After shift, PRIVATE_FUNCTIONS = $PRIVATE_FUNCTIONS"
 									done
 									PRIVATE_FUNCTIONS+=$'\n'
-									#echo "detected --private-function"
-									#echo "$PRIVATE_FUNCTIONS"
 									;;
 
-		-pv | --public-variable )	#shift
+		-pv | --public-variable )
 									while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-                                        #echo "After while, PUBLIC_VARIABLES = $PUBLIC_VARIABLES"
 										PUBLIC_VARIABLES+=$'\t'$2$';\n'
-										#echo "Before shift, PUBLIC_VARIABLES = $PUBLIC_VARIABLES"
 										shift
-										#echo "After shift, PUBLIC_VARIABLES = $PUBLIC_VARIABLES"
 									done
 									PUBLIC_VARIABLES+=$'\n'
-									#echo "detected --public-variable"
-									#echo "$PUBLIC_VARIABLES"
 									;;
 
-		-v | --private-variable )	#shift
+		-v | --private-variable )
 									while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-                                        #echo "After while, PRIVATE_VARIABLES = $PRIVATE_VARIABLES"
 										PRIVATE_VARIABLES+=$'\t'$2$';\n'
-										#echo "Before shift, PRIVATE_VARIABLES = $PRIVATE_VARIABLES"
 										shift
-										#echo "After shift, PRIVATE_VARIABLES = $PRIVATE_VARIABLES"
 									done
 									PRIVATE_VARIABLES+=$'\n'
-									#echo "detected --private-variable"
-									#echo "$PRIVATE_VARIABLES"
 									;;
+
 	esac
 	shift
 done
 
-#create header guard and beggining of a class definition for .h; includes, using namespade std for .cpp
+#create actual file using variables created above
 	if [ ! "$H_EXISTED" == "TRUE" ]; then
         echo $'#pragma once\n\nclass '"$CLASS_NAME"$'{\npublic:\n\n'"$PUBLIC_VARIABLES$PUBLIC_FUNCTIONS"$'private:\n\n'"$PRIVATE_VARIABLES$PRIVATE_FUNCTIONS"$'};' >> $CLASS_NAME.h
 	fi
@@ -93,9 +85,5 @@ done
 	if [ ! "$CPP_EXISTED" == "TRUE" ]; then
 		echo $'#include \"'"$CLASS_NAME"$'.h\"\n\nusing namespace std' >> $CLASS_NAME.cpp
 	fi
-
-	
-
-
 
 exit 0
