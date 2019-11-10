@@ -2,23 +2,88 @@
 
 CLASS_NAME=$1
 
-if [ "$1" !=  "" ]; then
+#create .cpp and .h files, if input arguments are correct
+if [[ $1 !=  "" && ${1:0:1} != "-" ]]; then
 
-	if [ ! -f ${CLASS_NAME}.cpp ]; then
-		touch ${CLASS_NAME}.cpp
+	if [ ! -f $CLASS_NAME.cpp ]; then
+		touch $CLASS_NAME.cpp
 	else
-		echo "${CLASS_NAME}.cpp exists, not creating it"
+		echo "$CLASS_NAME.cpp exists, not creating it"
+		CPP_EXISTED="TRUE"
 	fi
-	if [ ! -f ${CLASS_NAME}.h ]; then
-		touch ${CLASS_NAME}.h
+	if [ ! -f $CLASS_NAME.h ]; then
+		touch $CLASS_NAME.h
 	else
-		echo "${CLASS_NAME}.h exists, not creating it"
-	fi	
+		echo "$CLASS_NAME.h exists, not creating it"
+		H_EXISTED="TRUE"
+	fi
 
-	echo $'#pragma once\n\nclass '"${CLASS_NAME}"$'{\npublic:\n\nprivate:\n\n};' >> ${CLASS_NAME}.h
-
-	echo $'#include \"'"${CLASS_NAME}"$'.h\"\n\nusing namespace std' >> ${CLASS_NAME}.cpp
 else
 	echo "Name of class not specified"
+	exit
 fi
 
+#set the variables containing names of functions and variables
+PUBLIC_FUNCTIONS=
+PRIVATE_FUNCTIONS=
+PUBLIC_VARIABLES=
+PRIVATE_VARIABLES=
+while [ "$1" != "" ]; do
+	case $1 in
+		-pf | --public-function )	#shift
+									while [[ $1 != "" && ${1:0:1} != "-" ]]; do
+										PUBLIC_FUNCTIONS+=$'\t'$1$'();\n'
+										shift
+									done
+									PUBLIC_FUNCTIONS+=$'\n'
+									echo "detected --public-function"
+									echo "$PUBLIC_FUNCTIONS"
+									;;
+
+		-f | --private-function )	#shift
+									while [[ $1 != "" && ${1:0:1} != "-" ]]; do
+										PRIVATE_FUNCTIONS+=$'\t'$1$'();\n'
+										shift
+									done
+									PRIVATE_FUNCTIONS+=$'\n'
+									echo "detected --private-function"
+									echo "$PRIVATE_FUNCTIONS"
+									;;
+
+		-pv | --public-variable )	#shift
+									while [[ $1 != "" && ${1:0:1} != "-" ]]; do
+										PUBLIC_VARIABLES+=$'\t'$1$';\n'
+										shift
+									done
+									PUBLIC_VARIABLES+=$'\n'
+									echo "detected --public-variable"
+									echo "$PUBLIC_VARIABLES"
+									;;
+
+		-v | --private-variable )	#shift
+									while [[ $1 != "" && ${1:0:1} != "-" ]]; do
+										PRIVATE_VARIABLES+=$'\t'$1$';\n'
+										shift
+									done
+									PRIVATE_VARIABLES+=$'\n'
+									echo "detected --private-variable"
+									echo "$PRIVATE_VARIABLES"
+									;;
+	esac
+	shift
+done
+
+#create header guard and beggining of a class definition for .h; includes, using namespade std for .cpp
+	if [ ! "$H_EXISTED" == "TRUE" ]; then
+        echo $'#pragma once\n\nclass '"$CLASS_NAME"$'{\npublic:\n\n'"$PUBLIC_VARIABLES$PUBLIC_FUNCTIONS"$'private:\n\n'"$PRIVATE_VARIABLES$PRIVATE_FUNCTIONS"$'};' >> $CLASS_NAME.h
+	fi
+	
+	if [ ! "$CPP_EXISTED" == "TRUE" ]; then
+		echo $'#include \"'"$CLASS_NAME"$'.h\"\n\nusing namespace std' >> $CLASS_NAME.cpp
+	fi
+
+	
+
+
+
+exit 0
