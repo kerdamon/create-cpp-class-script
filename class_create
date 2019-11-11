@@ -125,7 +125,7 @@ done
 	fi
 	
 	if [ ! "$CPP_EXISTED" == "TRUE" ]; then
-		echo $'#include \"'"$CLASS_NAME"$'.h\"\n\nusing namespace std\n\n'"$PUBLIC_FUNCTIONSCPP$PRIVATE_FUNCTIONSCPP" >> $CLASS_NAME.cpp
+		echo $'#include \"'"$CLASS_NAME"$'.h\"\n\nusing namespace std;\n\n'"$PUBLIC_FUNCTIONSCPP$PRIVATE_FUNCTIONSCPP" >> $CLASS_NAME.cpp
 	fi
 
 exit 0
