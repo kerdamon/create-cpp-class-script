@@ -5,36 +5,35 @@ CLASS_NAME=$1
 #print help
 if [[ $1 == "-h" || $1 == "--help" ]]; then
 
-	echo $'Script written in bash for creating C++ class .h and .cpp files. \n\nOPTIONS:\n\t-pf | --public-function\n\t\tScript will create public functions in proper place. You do not need to write (); at the end, only name of a function.\n\t\tExample: -pf public_function1 public_function2\n\n\t-f | --private-function\n\t\tScript will create private functions in proper place. You do not need to write (); at the end, only name of a function.\n\t\tExample: -f private_function1 private_function2\n\n\t-pv | --public-variable\n\t\tScript will create public variables in proper place. You do not need to write ; at the end, only name of a variable.\n\t\tExample: -pv public_variable1 public_variable2\n\n\t-v | --private-variable\n\t\tScript will create private variables in proper place. You do not need to write ; at the end, only name of a variable.\n\t\tExample: -v private_variable1 private_variable2'
-	
-	exit
+    echo $'Script written in bash for creating C++ class .h and .cpp files.\n\nSYNOPSIS\n\n\tclass_create \e[3mfile\e[0m [\e[1m-f|-pf|-pv|-v|-sv|-spv|-spf|-sf\e[0m \e[3mname\e[0m...]...\n\nOPTIONS:\n\t-pf | --public-function\n\t\tScript will create public functions in proper place. You do not need to write (); at the end, only name of a function.\n\t\tExample: -pf public_function1 public_function2\n\n\t-f | --private-function\n\t\tScript will create private functions in proper place. You do not need to write (); at the end, only name of a function.\n\t\tExample: -f private_function1 private_function2\n\n\t-pv | --public-variable\n\t\tScript will create public variables in proper place. You do not need to write ; at the end, only name of a variable.\n\t\tExample: -pv public_variable1 public_variable2\n\n\t-v | --private-variable\n\t\tScript will create private variables in proper place. You do not need to write ; at the end, only name of a variable.\n\t\tExample: -v private_variable1 private_variable2\n\n\t-spv | --static-public-variable\n\t\tScript will create static public variables in proper place. You do not need to write ; at the end, only name of a variable.\n\t\tExample: -v static_public_variable1 static_public_variable2\n\n\t-spf | --static-public-function\n\t\tScript will create static public functions in proper place. You do not need to write (); at the end, only name of a function.\n\t\tExample: -pf static_public_function1 static_public_function2\n\n\t-sf | --static-private-function \n\t\tScript will create static private functions in proper place. You do not need to write (); at the end, only name of a function.\n\t\tExample: -pf static_private_function1 static_private_function2\n\n\t-sv | --static-private-variable\n\t\tScript will create static private variables in proper place. You do not need to write ; at the end, only name of a variable.\n\t\tExample: -v static_private_variable1 static_private_variable2'
+    
+    exit
 fi
 
 #create .cpp and .h files, if name is specified
 if [[ $1 !=  "" && ${1:0:1} != "-" ]]; then
 
-	if [ ! -f $CLASS_NAME.cpp ]; then
-		touch $CLASS_NAME.cpp
-	else
-		echo "$CLASS_NAME.cpp exists, not creating it"
-		CPP_EXISTED="TRUE"
-	fi
-	if [ ! -f $CLASS_NAME.h ]; then
-		touch $CLASS_NAME.h
-	else
-		echo "$CLASS_NAME.h exists, not creating it"
-		H_EXISTED="TRUE"
-	fi
+    if [ ! -f $CLASS_NAME.cpp ]; then       #checks if file exists, if not creates it
+        touch $CLASS_NAME.cpp
+    else
+        echo "$CLASS_NAME.cpp exists, not creating it"
+        CPP_EXISTED="TRUE"
+    fi
+    if [ ! -f $CLASS_NAME.h ]; then
+        touch $CLASS_NAME.h
+    else
+        echo "$CLASS_NAME.h exists, not creating it"
+        H_EXISTED="TRUE"
+    fi
 
-#elif [[ $1 == "-h" ]]; then
 else
 
-		echo "Name of class not specified"
-		exit
+        echo "Name of class not specified"
+        exit
 
 fi
 
-#set the variables containing names of functions and variables
+#set the variables containing names of functions and variables provided by options from input
 PUBLIC_FUNCTIONSH=
 PRIVATE_FUNCTIONSH=
 PUBLIC_FUNCTIONSCPP=
@@ -48,40 +47,40 @@ STATIC_PUBLIC_FUNCTIONSCPP=
 STATIC_PRIVATE_FUNCTIONSH=
 STATIC_PRIVATE_FUNCTIONSCPP=
 while [ "$1" != "" ]; do
-	case $1 in
-		-pf | --public-function )
-									while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-										PUBLIC_FUNCTIONSH+=$'\t '$2$'();\n'
-										PUBLIC_FUNCTIONSCPP+=" $CLASS_NAME::$2"$'(){\n\n}\n\n'
-										shift
-									done
-									PUBLIC_FUNCTIONSH+=$'\n'
-									;;
+    case $1 in
+        -pf | --public-function )   #supports short ang long version of option
+                                    while [[ $2 != "" && ${2:0:1} != "-" ]]; do     #takes argument as long as it is not another option(which starts with - or --) and writes it to proper name variable
+                                        PUBLIC_FUNCTIONSH+=$'\t '$2$'();\n'
+                                        PUBLIC_FUNCTIONSCPP+=" $CLASS_NAME::$2"$'(){\n\n}\n\n'
+                                        shift
+                                    done
+                                    PUBLIC_FUNCTIONSH+=$'\n'
+                                    ;;
 
-		-f | --private-function )
-									while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-										PRIVATE_FUNCTIONSH+=$'\t '$2$'();\n'
-										PRIVATE_FUNCTIONSCPP+=" $CLASS_NAME::$2"$'(){\n\n}\n\n'
-										shift
-									done
-									PRIVATE_FUNCTIONSH+=$'\n'
-									;;
+        -f | --private-function )
+                                    while [[ $2 != "" && ${2:0:1} != "-" ]]; do
+                                        PRIVATE_FUNCTIONSH+=$'\t '$2$'();\n'
+                                        PRIVATE_FUNCTIONSCPP+=" $CLASS_NAME::$2"$'(){\n\n}\n\n'
+                                        shift
+                                    done
+                                    PRIVATE_FUNCTIONSH+=$'\n'
+                                    ;;
 
-		-pv | --public-variable )
-									while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-										PUBLIC_VARIABLES+=$'\t '$2$';\n'
-										shift
-									done
-									PUBLIC_VARIABLES+=$'\n'
-									;;
+        -pv | --public-variable )
+                                    while [[ $2 != "" && ${2:0:1} != "-" ]]; do
+                                        PUBLIC_VARIABLES+=$'\t '$2$';\n'
+                                        shift
+                                    done
+                                    PUBLIC_VARIABLES+=$'\n'
+                                    ;;
 
-		-v | --private-variable )
-									while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-										PRIVATE_VARIABLES+=$'\t '$2$';\n'
-										shift
-									done
-									PRIVATE_VARIABLES+=$'\n'
-									;;
+        -v | --private-variable )
+                                    while [[ $2 != "" && ${2:0:1} != "-" ]]; do
+                                        PRIVATE_VARIABLES+=$'\t '$2$';\n'
+                                        shift
+                                    done
+                                    PRIVATE_VARIABLES+=$'\n'
+                                    ;;
 
         -spv | --static-public-variable )
                                             while [[ $2 != "" && ${2:0:1} != "-" ]]; do
@@ -91,41 +90,41 @@ while [ "$1" != "" ]; do
                                             STATIC_PUBLIC_VARIABLES+=$'\n'
                                             ;;
 
-		-sv | --static-private-variable )
+        -sv | --static-private-variable )
                                             while [[ $2 != "" && ${2:0:1} != "-" ]]; do
                                                 STATIC_PRIVATE_VARIABLES+=$'\tstatic  '$2$';\n'
                                                 shift
                                             done
                                             STATIC_PRIVATE_VARIABLES+=$'\n'
                                             ;;
-		-spf | --static-public-function )
-									while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-										STATIC_PUBLIC_FUNCTIONSH+=$'\tstatic  '$2$'();\n'
-										STATIC_PUBLIC_FUNCTIONSCPP+=" $CLASS_NAME::$2"$'(){\n\n}\n\n'
-										shift
-									done
-									STATIC_PUBLIC_FUNCTIONSH+=$'\n'
-									;;
+        -spf | --static-public-function )
+                                            while [[ $2 != "" && ${2:0:1} != "-" ]]; do
+                                                STATIC_PUBLIC_FUNCTIONSH+=$'\tstatic  '$2$'();\n'
+                                                STATIC_PUBLIC_FUNCTIONSCPP+=" $CLASS_NAME::$2"$'(){\n\n}\n\n'
+                                                shift
+                                            done
+                                            STATIC_PUBLIC_FUNCTIONSH+=$'\n'
+                                            ;;
 
-		-sf | --static-private-function )
-									while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-										STATIC_PRIVATE_FUNCTIONSH+=$'\tstatic  '$2$'();\n'
-										STATIC_PRIVATE_FUNCTIONSCPP+=" $CLASS_NAME::$2"$'(){\n\n}\n\n'
-										shift
-									done
-									STATIC_PRIVATE_FUNCTIONSH+=$'\n'
-									;;
-	esac
-	shift
+        -sf | --static-private-function )
+                                            while [[ $2 != "" && ${2:0:1} != "-" ]]; do
+                                                STATIC_PRIVATE_FUNCTIONSH+=$'\tstatic  '$2$'();\n'
+                                                STATIC_PRIVATE_FUNCTIONSCPP+=" $CLASS_NAME::$2"$'(){\n\n}\n\n'
+                                                shift
+                                            done
+                                            STATIC_PRIVATE_FUNCTIONSH+=$'\n'
+                                            ;;
+    esac
+    shift
 done
 
 #create actual file using variables created above
-	if [ ! "$H_EXISTED" == "TRUE" ]; then
+    if [ ! "$H_EXISTED" == "TRUE" ]; then
         echo $'#pragma once\n\nclass '"$CLASS_NAME"$'{\npublic:\n\n'"$STATIC_PUBLIC_VARIABLES$PUBLIC_VARIABLES$PUBLIC_FUNCTIONSH$STATIC_PUBLIC_FUNCTIONSH"$'private:\n\n'"$STATIC_PRIVATE_VARIABLES$PRIVATE_VARIABLES$PRIVATE_FUNCTIONSH$STATIC_PRIVATE_FUNCTIONSH"$'};' >> $CLASS_NAME.h
-	fi
-	
-	if [ ! "$CPP_EXISTED" == "TRUE" ]; then
-		echo $'#include \"'"$CLASS_NAME"$'.h\"\n\nusing namespace std;\n\n'"$PUBLIC_FUNCTIONSCPP$PRIVATE_FUNCTIONSCPP" >> $CLASS_NAME.cpp
-	fi
+    fi
+    
+    if [ ! "$CPP_EXISTED" == "TRUE" ]; then
+        echo $'#include \"'"$CLASS_NAME"$'.h\"\n\nusing namespace std;\n\n'"$PUBLIC_FUNCTIONSCPP$PRIVATE_FUNCTIONSCPP" >> $CLASS_NAME.cpp
+    fi
 
 exit 0
