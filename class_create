@@ -52,6 +52,7 @@ STATIC_PUBLIC_FUNCTIONSCPP=
 STATIC_PRIVATE_FUNCTIONSH=
 STATIC_PRIVATE_FUNCTIONSCPP=
 CONSTRUCTOR=
+DESTRUCTOR=
 INCLUDE_IOSTREAM=
 while [ "$1" != "" ]; do
     case $1 in
@@ -123,15 +124,15 @@ while [ "$1" != "" ]; do
                                             ;;
         -c | --constructor )
                                             CONSTRUCTOR=$'\t'$CLASS_NAME$'(){\n\n\t}\n\n'
-                                            shift
+                                            #shift
                                             ;;
         -d | --destructor )
-                                            DESTRUCTORS=$'\t~'$CLASS_NAME$'(){\n\n\t}\n\n'
-                                            shift
+                                            DESTRUCTOR=$'\t~'$CLASS_NAME$'(){\n\n\t}\n\n'
+                                            #shift
                                             ;;
         -i | --include-iostream )
                                             INCLUDE_IOSTREAM=$'\n#include <iostream>\n\nusing namespace std;'
-                                            shift
+                                            #shift
                                             ;;
     esac
     shift
