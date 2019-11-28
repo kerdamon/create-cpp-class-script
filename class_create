@@ -33,106 +33,121 @@ if [[ $CLASS_NAME !=  "" ]]; then
 
 else
 
-        echo "Name of class not specified"
+        echo "Aborted: Name of class not specified. At least one argument before options mus be specified for class name"
         exit
 
 fi
 
 #set the variables containing names of functions and variables provided by options from input
-PUBLIC_FUNCTIONSH=
-PRIVATE_FUNCTIONSH=
-PUBLIC_FUNCTIONSCPP=
-PRIVATE_FUNCTIONSCPP=
+PUBLIC_FUNCTIONS_H=
+PRIVATE_FUNCTIONS_H=
+PUBLIC_FUNCTIONS_CPP=
+PRIVATE_FUNCTIONS_CPP=
 PUBLIC_VARIABLES=
 PRIVATE_VARIABLES=
-STATIC_PUBLIC_VARIABLES=
-STATIC_PRIVATE_VARIABLES=
-STATIC_PUBLIC_FUNCTIONSH=
-STATIC_PUBLIC_FUNCTIONSCPP=
-STATIC_PRIVATE_FUNCTIONSH=
-STATIC_PRIVATE_FUNCTIONSCPP=
-CONSTRUCTOR=
-DESTRUCTOR=
+STATIC_PUBLIC_VARIABLES_H=
+STATIC_PUBLIC_VARIABLES_CPP=
+STATIC_PRIVATE_VARIABLES_H=
+STATIC_PRIVATE_VARIABLES_CPP=
+STATIC_PUBLIC_FUNCTIONS_H=
+STATIC_PUBLIC_FUNCTIONS_CPP=
+STATIC_PRIVATE_FUNCTIONS_H=
+STATIC_PRIVATE_FUNCTIONS_CPP=
+CONSTRUCTOR_H=
+CONSTRUCTOR_CPP=
+DESTRUCTOR_H=
+DESTRUCTOR_CPP=
 INCLUDE_IOSTREAM=
 while [ "$1" != "" ]; do
     case $1 in
         -pf | --public-function )   #supports short ang long version of option
+                                    PUBLIC_FUNCTIONS_H=$'\t//methods\n'
                                     while [[ $2 != "" && ${2:0:1} != "-" ]]; do     #takes argument as long as it is not another option(which starts with - or --) and writes it to proper name variable
-                                        PUBLIC_FUNCTIONSH+=$'\t '$2$'();\n'
-                                        PUBLIC_FUNCTIONSCPP+=" $CLASS_NAME::$2"$'(){\n\n}\n\n'
+                                        PUBLIC_FUNCTIONS_H+=$'\t '${2^}$'();\n'
+                                        PUBLIC_FUNCTIONS_CPP+=" $CLASS_NAME::${2^}"$'(){\n\n}\n\n'
                                         shift
                                     done
-                                    PUBLIC_FUNCTIONSH+=$'\n'
+                                    PUBLIC_FUNCTIONS_H+=$'\n'
                                     ;;
 
         -f | --private-function )
+                                    PRIVATE_FUNCTIONS_H=$'\t//private methods\n'
                                     while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-                                        PRIVATE_FUNCTIONSH+=$'\t '$2$'();\n'
-                                        PRIVATE_FUNCTIONSCPP+=" $CLASS_NAME::$2"$'(){\n\n}\n\n'
+                                        PRIVATE_FUNCTIONS_H+=$'\t '_${2^}$'();\n'
+                                        PRIVATE_FUNCTIONS_CPP+=" $CLASS_NAME::_${2^}"$'(){\n\n}\n\n'
                                         shift
                                     done
-                                    PRIVATE_FUNCTIONSH+=$'\n'
+                                    PRIVATE_FUNCTIONS_H+=$'\n'
                                     ;;
 
         -pv | --public-variable )
+                                    PUBLIC_VARIABLES+=$'\t//public variables\n'
                                     while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-                                        PUBLIC_VARIABLES+=$'\t '$2$';\n'
+                                        PUBLIC_VARIABLES+=$'\t '${2,}$';\n'
                                         shift
                                     done
                                     PUBLIC_VARIABLES+=$'\n'
                                     ;;
 
         -v | --private-variable )
+                                    PRIVATE_VARIABLES=$'\t//variables\n'
                                     while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-                                        PRIVATE_VARIABLES+=$'\t _'$2$';\n'
+                                        PRIVATE_VARIABLES+=$'\t _'${2,}$';\n'
                                         shift
                                     done
                                     PRIVATE_VARIABLES+=$'\n'
                                     ;;
 
         -spv | --static-public-variable )
+                                            STATIC_PUBLIC_VARIABLES_H+=$'\t//static public variables\n'
                                             while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-                                                STATIC_PUBLIC_VARIABLES+=$'\tstatic  '$2$';\n'
+                                                STATIC_PUBLIC_VARIABLES_H+=$'\tstatic  '${2,}$';\n'
+                                                STATIC_PUBLIC_VARIABLES_CPP+=" $CLASS_NAME::${2,}"$' = 0;\n\n'
                                                 shift
                                             done
-                                            STATIC_PUBLIC_VARIABLES+=$'\n'
+                                            STATIC_PUBLIC_VARIABLES_H+=$'\n'
                                             ;;
 
         -sv | --static-private-variable )
+                                            STATIC_PRIVATE_VARIABLES_H+=$'\t//static private variables\n'
                                             while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-                                                STATIC_PRIVATE_VARIABLES+=$'\tstatic  _'$2$';\n'
+                                                STATIC_PRIVATE_VARIABLES_H+=$'\tstatic  _'${2,}$';\n'
+                                                STATIC_PRIVATE_VARIABLES_CPP+=" $CLASS_NAME::${2,}"$' = 0;\n\n'
                                                 shift
                                             done
-                                            STATIC_PRIVATE_VARIABLES+=$'\n'
+                                            STATIC_PRIVATE_VARIABLES_H+=$'\n'
                                             ;;
         -spf | --static-public-function )
+                                            STATIC_PUBLIC_FUNCTIONS_H+=$'\t//static public methods\n'
                                             while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-                                                STATIC_PUBLIC_FUNCTIONSH+=$'\tstatic  '$2$'();\n'
-                                                STATIC_PUBLIC_FUNCTIONSCPP+=" $CLASS_NAME::$2"$'(){\n\n}\n\n'
+                                                STATIC_PUBLIC_FUNCTIONS_H+=$'\tstatic  '${2^}$'();\n'
+                                                STATIC_PUBLIC_FUNCTIONS_CPP+=" $CLASS_NAME::${2^}"$'(){\n\n}\n\n'
                                                 shift
                                             done
-                                            STATIC_PUBLIC_FUNCTIONSH+=$'\n'
+                                            STATIC_PUBLIC_FUNCTIONS_H+=$'\n'
                                             ;;
 
         -sf | --static-private-function )
+                                            STATIC_PRIVATE_FUNCTIONS_H+=$'\t//static private methods\n'
                                             while [[ $2 != "" && ${2:0:1} != "-" ]]; do
-                                                STATIC_PRIVATE_FUNCTIONSH+=$'\tstatic  '$2$'();\n'
-                                                STATIC_PRIVATE_FUNCTIONSCPP+=" $CLASS_NAME::$2"$'(){\n\n}\n\n'
+                                                STATIC_PRIVATE_FUNCTIONS_H+=$'\tstatic  '${2^}$'();\n'
+                                                STATIC_PRIVATE_FUNCTIONS_CPP+=" $CLASS_NAME::${2^}"$'(){\n\n}\n\n'
                                                 shift
                                             done
-                                            STATIC_PRIVATE_FUNCTIONSH+=$'\n'
+                                            STATIC_PRIVATE_FUNCTIONS_H+=$'\n'
                                             ;;
         -c | --constructor )
-                                            CONSTRUCTOR=$'\t'$CLASS_NAME$'(){\n\n\t}\n\n'
-                                            #shift
+                                            CONSTRUCTOR_H=$'\t//constructors\n'
+                                            CONSTRUCTOR_H+=$'\t'$CLASS_NAME$'();\n\n'
+                                            CONSTRUCTOR_CPP="$CLASS_NAME::$CLASS_NAME"$'(){\n\n}\n\n'
                                             ;;
         -d | --destructor )
-                                            DESTRUCTOR=$'\t~'$CLASS_NAME$'(){\n\n\t}\n\n'
-                                            #shift
+                                            DESTRUCTOR_H=$'\t//destructors\n'
+                                            DESTRUCTOR_H+=$'\t~'$CLASS_NAME$'();\n\n'
+                                            DESTRUCTOR_CPP="$CLASS_NAME::~$CLASS_NAME"$'(){\n\n}\n\n'
                                             ;;
         -i | --include-iostream )
                                             INCLUDE_IOSTREAM=$'\n#include <iostream>\n\nusing namespace std;'
-                                            #shift
                                             ;;
     esac
     shift
@@ -140,11 +155,11 @@ done
 
 #create actual file using variables created above
     if [ ! "$H_EXISTED" == "TRUE" ]; then
-        echo $'#pragma once\n\nclass '"$CLASS_NAME"$'{\npublic:\n\n'"$STATIC_PUBLIC_FUNCTIONSH$PUBLIC_FUNCTIONSH$CONSTRUCTOR$DESTRUCTOR$STATIC_PUBLIC_VARIABLES$PUBLIC_VARIABLES"$'private:\n\n'"$STATIC_PRIVATE_VARIABLES$PRIVATE_VARIABLES$STATIC_PRIVATE_FUNCTIONSH$PRIVATE_FUNCTIONSH"$'};' >> $CLASS_NAME.h
+        echo $'#pragma once\n\nclass '"$CLASS_NAME"$'{\npublic:\n\n'"$CONSTRUCTOR_H$DESTRUCTOR_H$STATIC_PUBLIC_FUNCTIONS_H$PUBLIC_FUNCTIONS_H$STATIC_PUBLIC_VARIABLES_H$PUBLIC_VARIABLES"$'private:\n\n'"$STATIC_PRIVATE_FUNCTIONS_H$PRIVATE_FUNCTIONS_H$STATIC_PRIVATE_VARIABLES_H$PRIVATE_VARIABLES"$'};' >> $CLASS_NAME.h
     fi
     
     if [ ! "$CPP_EXISTED" == "TRUE" ]; then
-        echo $'#include \"'"$CLASS_NAME"$'.h\"'"$INCLUDE_IOSTREAM"$'\n\n'"$PUBLIC_FUNCTIONSCPP$PRIVATE_FUNCTIONSCPP" >> $CLASS_NAME.cpp
+        echo $'#include \"'"$CLASS_NAME"$'.h\"'"$INCLUDE_IOSTREAM"$'\n\n'"$STATIC_PUBLIC_VARIABLES_CPP$STATIC_PRIVATE_VARIABLES_CPP$CONSTRUCTOR_CPP$DESTRUCTOR_CPP$PUBLIC_FUNCTIONS_CPP$PRIVATE_FUNCTIONS_CPP" >> $CLASS_NAME.cpp
     fi
 
 exit 0
