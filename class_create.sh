@@ -2,9 +2,7 @@
 
 #print help
 if [[ $1 == "-h" || $1 == "--help" ]]; then
-
-    echo $'Script written in bash for creating C++ class .h and .cpp files.\n\nSYNOPSIS\n\n\tclass_create \e[3mfile\e[0m [\e[1m-f|-pf|-pv|-v|-sv|-spv|-spf|-sf|-i|-c|-d\e[0m \e[3mname\e[0m...]...\n\nOPTIONS:\n\t-pf | --public-function\n\t\tScript will create public functions in proper place. You do not need to write (); at the end, only name of a function.\n\t\tExample: -pf public_function1 public_function2\n\n\t-f | --private-function\n\t\tScript will create private functions in proper place. You do not need to write (); at the end, only name of a function.\n\t\tExample: -f private_function1 private_function2\n\n\t-pv | --public-variable\n\t\tScript will create public variables in proper place. You do not need to write ; at the end, only name of a variable.\n\t\tExample: -pv public_variable1 public_variable2\n\n\t-v | --private-variable\n\t\tScript will create private variables in proper place. You do not need to write ; at the end, only name of a variable.\n\t\tExample: -v private_variable1 private_variable2\n\n\t-spv | --static-public-variable\n\t\tScript will create static public variables in proper place. You do not need to write ; at the end, only name of a variable.\n\t\tExample: -spv static_public_variable1 static_public_variable2\n\n\t-spf | --static-public-function\n\t\tScript will create static public functions in proper place. You do not need to write (); at the end, only name of a function.\n\t\tExample: -spf static_public_function1 static_public_function2\n\n\t-sf | --static-private-function \n\t\tScript will create static private functions in proper place. You do not need to write (); at the end, only name of a function.\n\t\tExample: -sf static_private_function1 static_private_function2\n\n\t-sv | --static-private-variable\n\t\tScript will create static private variables in proper place. You do not need to write ; at the end, only name of a variable.\n\t\tExample: -sv static_private_variable1 static_private_variable2\n\n\t-i | --include-iostream\n\t\tScript will #include <iostream> in the .cpp file.\n\t\tExample: -i does_not_matter_it_will_be_ignored1 does_not_matter_it_will_be_ignored2\n\n\t-c | --constructor \n\t\tScript will create basic constructor in .h file.\n\t\tExample: -c does_not_matter_it_will_be_ignored1 does_not_matter_it_will_be_ignored2\n\n\t-d | --destructor \n\t\tScript will create destructor in .h file.\n\t\tExample: -d does_not_matter_it_will_be_ignored1 does_not_matter_it_will_be_ignored2'
-    
+    ./class_create_help.sh
     exit
 fi
 
@@ -33,8 +31,8 @@ if [[ $CLASS_NAME !=  "" ]]; then
 
 else
 
-        echo "Aborted: Name of class not specified. At least one argument before options mus be specified for class name"
-        exit
+    echo "Aborted: Name of class not specified. At least one argument before options mus be specified for class name"
+    exit
 
 fi
 
@@ -113,10 +111,11 @@ while [ "$1" != "" ]; do
                                             STATIC_PUBLIC_VARIABLES_H+=$'\t//static public variables\n'
                                             while [[ $2 != "" && ${2:0:1} != "-" ]]; do
                                                 STATIC_PUBLIC_VARIABLES_H+=$'\tstatic  '${2,}$';\n'
-                                                STATIC_PUBLIC_VARIABLES_CPP+=" $CLASS_NAME::${2,}"$' = 0;\n\n'
+                                                STATIC_PUBLIC_VARIABLES_CPP+=" $CLASS_NAME::${2,}"$' = 0;\n'
                                                 shift
                                             done
                                             STATIC_PUBLIC_VARIABLES_H+=$'\n'
+                                            STATIC_PUBLIC_VARIABLES_CPP+=$'\n'
                                             ;;
 
         -v | --private-variable )
@@ -132,10 +131,11 @@ while [ "$1" != "" ]; do
                                             STATIC_PRIVATE_VARIABLES_H+=$'\t//static private variables\n'
                                             while [[ $2 != "" && ${2:0:1} != "-" ]]; do
                                                 STATIC_PRIVATE_VARIABLES_H+=$'\tstatic  _'${2,}$';\n'
-                                                STATIC_PRIVATE_VARIABLES_CPP+=" $CLASS_NAME::${2,}"$' = 0;\n\n'
+                                                STATIC_PRIVATE_VARIABLES_CPP+=" $CLASS_NAME::${2,}"$' = 0;\n'
                                                 shift
                                             done
                                             STATIC_PRIVATE_VARIABLES_H+=$'\n'
+                                            STATIC_PRIVATE_VARIABLES_CPP+=$'\n'
                                             ;;
         -c | --constructor )
                                             CONSTRUCTOR_H=$'\t//constructors\n'
